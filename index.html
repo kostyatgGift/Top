@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TeamApps | Summer Speed Monitor</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        * {
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Светлый летний фон в стиле оригинального фото: солнце, тепло и намёк на листву */
+        body {
+            background-color: #f6f5f0;
+            background-image: 
+                radial-gradient(at 90% 10%, rgba(253, 224, 71, 0.25) 0px, transparent 50%), /* Солнечный блик */
+                radial-gradient(at 0% 0%, rgba(34, 197, 94, 0.12) 0px, transparent 45%),   /* Мягкая зелень листьев */
+                radial-gradient(at 50% 100%, rgba(0, 102, 255, 0.05) 0px, transparent 60%);
+            background-attachment: fixed;
+        }
+
+        /* Эффект матового стекла на светлом фоне (как дорогая дизайнерская бумага) */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 20px 40px rgba(11, 13, 25, 0.04);
+        }
+
+        /* Индивидуальные подложки для карточек ботов */
+        .bot-row {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+        }
+    </style>
+</head>
+<body class="text-slate-800 font-sans min-h-screen p-4 flex flex-col items-center justify-start antialiased">
+
+    <!-- БРЕНДИНГ-ХЕДЕР (В летнем стиле по фото IMG_20260706_005108_477.jpg) -->
+    <div class="w-full max-w-md flex flex-col items-center my-6 animate-fade-in">
+        <div class="flex items-center justify-center gap-4 bg-white/80 border border-white/90 px-5 py-3 rounded-2xl w-full shadow-sm backdrop-blur-md">
+            
+            <!-- Логотип TeamApps -->
+            <div class="flex items-center gap-2">
+                <svg class="w-7 h-7" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="16" cy="7" r="3" fill="#0066FF"/>
+                    <circle cx="7" cy="11" r="2.5" fill="#0066FF"/>
+                    <circle cx="25" cy="11" r="2.5" fill="#0066FF"/>
+                    <path d="M7 16C7 13.5 9 12 11.5 12C13 12 14.5 13 16 14.5C17.5 13 19 12 20.5 12C23 12 25 13.5 25 16V21C25 22.5 23.5 24 21 24H11C8.5 24 7 22.5 7 21V16Z" fill="#0066FF"/>
+                    <path d="M11 20C11 18.5 12.5 17 14.5 17H17.5C19.5 17 21 18.5 21 20" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span class="text-lg font-black tracking-tight text-slate-900 font-mono">Team<span class="text-[#0066FF]">Apps</span></span>
+            </div>
+
+            <!-- Разделитель -->
+            <div class="h-8 w-[1px] bg-slate-200"></div>
+
+            <!-- Партнерский блок EdiApps -->
+            <div class="flex flex-col items-start">
+                <span class="text-[9px] text-slate-500 font-semibold tracking-wide uppercase">Наши партнёры</span>
+                <div class="flex items-center gap-0.5 mt-0.5">
+                    <svg class="w-4 h-4 text-[#8B5CF6]" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM4.68 12C6.39 14.07 9.04 15 12 15s5.61-.93 7.32-3H4.68z"/>
+                    </svg>
+                    <span class="text-sm font-bold tracking-tight text-[#8B5CF6]">Edi<span class="text-[#00C2FF]">Apps</span></span>
+                </div>
+            </div>
+
+        </div>
+        
+        <p class="text-emerald-700/70 text-[10px] mt-3.5 tracking-widest uppercase font-black bg-emerald-500/10 px-3 py-0.5 rounded-full">
+            🌱 Летний мониторинг скорости
+        </p>
+    </div>
+
+    <!-- ОСНОВНОЙ ЭКРАН -->
+    <div class="w-full max-w-md glass-panel rounded-3xl p-5 shadow-xl">
+        
+        <!-- Верхний статус бар -->
+        <div class="flex justify-between items-center mb-5 border-b border-slate-200/60 pb-4">
+            <div class="flex flex-col">
+                <h2 class="text-xs font-black uppercase tracking-widest text-slate-500">Рейтинг ботов</h2>
+                <span class="text-[10px] text-slate-400 font-medium mt-0.5">Самые быстрые серверы — сверху</span>
+            </div>
+            <!-- Живой летний индикатор -->
+            <div class="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full">
+                <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                <span class="text-[9px] text-emerald-600 font-black tracking-widest font-mono">ONLINE</span>
+            </div>
+        </div>
+        
+        <!-- КОНТЕЙНЕР ДЛЯ ВЫВОДА ЛИДЕРОВ -->
+        <div class="space-y-2.5" id="topContainer">
+            <div class="text-center py-10 text-slate-400 text-sm font-medium">
+                ⏳ Обновление списков...
+            </div>
+        </div>
+        
+        <!-- ФУТЕР -->
+        <div class="mt-6 pt-4 border-t border-slate-200/60 text-center text-slate-400 text-[10px] font-semibold tracking-wide">
+            ☀️ Экосистема TeamApps • 2026
+        </div>
+    </div>
+
+    <script>
+        function renderGlobalTop() {
+            const container = document.getElementById('topContainer');
+            const urlParams = new URLSearchParams(window.location.search);
+            const topDataRaw = urlParams.get('top');
+            
+            let bots = [];
+            
+            if (topDataRaw) {
+                try {
+                    bots = JSON.parse(decodeURIComponent(topDataRaw));
+                } catch (e) {
+                    console.error("Ошибка чтения данных:", e);
+                }
+            }
+
+            if (bots.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-10 text-slate-400 text-sm font-medium bg-white/40 rounded-2xl border border-slate-200/40">
+                        <span class="text-2xl block mb-2">🍃</span>
+                        Пока здесь пусто.<br>Запусти тест любого бота в чате!
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = "";
+
+            bots.forEach((bot, index) => {
+                let badge = `${index + 1}`;
+                let rowStyle = "bot-row border-slate-200/60 shadow-xs";
+                let pingStyle = "text-emerald-600 bg-emerald-500/10 border-emerald-500/20 font-bold";
+                let nameStyle = "text-slate-800";
+                
+                // Премиальные летние карточки лидеров
+                if (index === 0) {
+                    badge = "🥇";
+                    rowStyle = "border-amber-400/40 bg-gradient-to-r from-amber-500/10 to-white/60 shadow-sm";
+                    pingStyle = "text-white bg-amber-500 border-amber-500 font-black shadow-sm shadow-amber-500/20";
+                    nameStyle = "text-slate-900 font-extrabold";
+                } else if (index === 1) {
+                    badge = "🥈";
+                    rowStyle = "border-blue-400/30 bg-gradient-to-r from-[#0066FF]/5 to-white/60";
+                    pingStyle = "text-[#0066FF] bg-[#0066FF]/10 border-[#0066FF]/20 font-bold";
+                    nameStyle = "text-slate-900 font-bold";
+                } else if (index === 2) {
+                    badge = "🥉";
+                    rowStyle = "border-purple-400/30 bg-gradient-to-r from-[#8B5CF6]/5 to-white/60";
+                    pingStyle = "text-[#8B5CF6] bg-[#8B5CF6]/10 border-[#8B5CF6]/20 font-bold";
+                    nameStyle = "text-slate-800 font-bold";
+                }
+
+                container.innerHTML += `
+                    <div class="flex justify-between items-center p-3 rounded-2xl border ${rowStyle} transition-all duration-200 transform active:scale-[0.99]">
+                        <div class="flex items-center gap-3">
+                            <span class="w-6 text-center text-xs font-black font-mono text-slate-400">${badge}</span>
+                            <span class="font-bold text-sm ${nameStyle}">
+                                <span class="text-[#0066FF] font-medium opacity-70">@</span>${bot.username}
+                            </span>
+                        </div>
+                        <div class="font-mono text-xs px-2.5 py-1 rounded-xl border ${pingStyle}">
+                            ${bot.ping} ms
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        renderGlobalTop();
+    </script>
+</body>
+</html>
