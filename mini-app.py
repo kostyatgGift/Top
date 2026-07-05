@@ -2,116 +2,146 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bot Ping Tester & TOP</title>
-    <!-- Подключаем Tailwind CSS для крутого стиля -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TeamTop Leaderboard</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        body {
-            background: radial-gradient(circle at center, #1a1a2e 0%, #0f0f1a 100%);
+        /* Отключаем выделение текста для ощущения нативного приложения */
+        * {
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
-        .neon-border {
-            box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+        
+        /* Сложный дизайнерский фон с глубокими неоновыми переливами */
+        body {
+            background-color: #080810;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 55%),
+                radial-gradient(at 100% 0%, rgba(236, 72, 153, 0.15) 0px, transparent 55%),
+                radial-gradient(at 50% 100%, rgba(20, 184, 166, 0.1) 0px, transparent 60%);
+            background-attachment: fixed;
+        }
+
+        /* Премиальный эффект матового стекла (Glassmorphism) */
+        .glass-card {
+            background: rgba(22, 22, 43, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .neon-text-glow {
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
         }
     </style>
 </head>
-<body class="text-gray-100 font-sans min-h-screen p-4 flex flex-col items-center">
+<body class="text-gray-100 font-sans min-h-screen p-4 flex flex-col items-center justify-start antialiased selection:bg-purple-500/30">
 
-    <!-- Заголовок -->
-    <div class="text-center my-6">
-        <h1 class="text-3xl font-extrabold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent uppercase tracking-wider">
-            ⚡ Bot Ping Monitor
+    <div class="text-center my-7 animate-fade-in">
+        <div class="inline-block bg-purple-500/10 border border-purple-500/20 px-3 py-1 rounded-full text-[10px] font-black tracking-widest text-purple-400 uppercase mb-3">
+            ⚡ SPEED MONITOR ⚡
+        </div>
+        <h1 class="text-4xl font-black bg-gradient-to-r from-white via-slate-200 to-gray-400 bg-clip-text text-transparent uppercase tracking-wider font-mono">
+            TEAM<span class="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent neon-text-glow">TOP</span>
         </h1>
-        <p class="text-gray-400 text-sm mt-1">Узнай задержку бота и попади в мировой ТОП</p>
+        <p class="text-gray-400 text-xs mt-1.5 tracking-wide font-medium opacity-80">Глобальный рейтинг отклика ботов</p>
     </div>
 
-    <!-- Форма проверки бота -->
-    <div class="w-full max-w-md bg-[#16162a]/80 border border-purple-500/30 rounded-2xl p-5 mb-6 neon-border backdrop-blur-md">
-        <h2 class="text-lg font-semibold mb-3 text-purple-300">Проверить скорость бота</h2>
-        <div class="flex gap-2">
-            <span class="flex items-center pl-3 text-gray-500 font-bold bg-[#0f0f1a] rounded-l-xl border-y border-l border-gray-700">@</span>
-            <input id="botUsername" type="text" placeholder="username_bot" 
-                   class="w-full bg-[#0f0f1a] p-3 pl-1 border-y border-r border-gray-700 rounded-r-xl focus:outline-none focus:border-purple-500 transition text-white">
-        </div>
-        <button onclick="checkBotPing()" 
-                class="w-full mt-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 font-bold p-3 rounded-xl transition transform active:scale-95 cursor-pointer shadow-lg shadow-purple-500/20">
-            Запустить тест 🔥
-        </button>
-        <!-- Результат теста (скрыт по умолчанию) -->
-        <div id="resultBlock" class="hidden mt-4 p-3 bg-green-500/10 border border-green-500/30 rounded-xl text-center">
-            <p class="text-gray-300">Результат <span id="checkedBotName" class="text-white font-bold"></span>:</p>
-            <p class="text-2xl font-black text-green-400 mt-1"><span id="pingValue">0</span> ms</p>
-        </div>
-    </div>
-
-    <!-- ТАБЛИЦА ЛИДЕРОВ (ТОП БОТОВ) -->
-    <div class="w-full max-w-md bg-[#16162a]/80 border border-gray-800 rounded-2xl p-5 backdrop-blur-md">
-        <h2 class="text-lg font-bold mb-4 text-pink-400 flex items-center gap-2">
-            🏆 ТОП-5 Самых быстрых ботов
-        </h2>
-        <div class="space-y-3" id="topList">
-            <!-- Сюда данные будут грузиться из API -->
-            <div class="flex justify-between items-center bg-[#0f0f1a] p-3 rounded-xl border border-gray-800">
-                <span class="font-medium text-gray-400">📊 Загрузка топа...</span>
+    <div class="w-full max-w-md glass-card rounded-3xl p-5 shadow-2xl shadow-black/40">
+        
+        <div class="flex justify-between items-center mb-5 border-b border-white/5 pb-4">
+            <div class="flex flex-col">
+                <h2 class="text-xs font-black uppercase tracking-widest text-slate-400">Рейтинг Лидеров</h2>
+                <span class="text-[10px] text-gray-500 font-medium mt-0.5">Меньше ms — выше позиция</span>
+            </div>
+            <div class="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full">
+                <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-ping"></span>
+                <span class="text-[9px] text-emerald-400 font-black tracking-widest font-mono">LIVE</span>
             </div>
         </div>
+        
+        <div class="space-y-3" id="topContainer">
+            <div class="text-center py-8 text-gray-500 text-sm">
+                ⏳ Загрузка результатов...
+            </div>
+        </div>
+        
+        <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-center gap-2 text-center text-slate-500 text-[11px] font-medium opacity-70">
+            <span>🤖 Добавить бота: отправь юзернейм в чат TeamTop</span>
+        </div>
     </div>
 
-    <!-- Скрипт для связи с твоим Render API -->
     <script>
-        // Замени на URL своего бэкенда на Render, когда обновишь его
-        const BACKEND_URL = "https://ai-api-sonq.onrender.com"; 
+        function renderGlobalTop() {
+            const container = document.getElementById('topContainer');
+            const urlParams = new URLSearchParams(window.location.search);
+            const topDataRaw = urlParams.get('top');
+            
+            let bots = [];
+            
+            if (topDataRaw) {
+                try {
+                    bots = JSON.parse(decodeURIComponent(topDataRaw));
+                } catch (e) {
+                    console.error("Ошибка парсинга:", e);
+                }
+            }
 
-        // Функция получения ТОПа при загрузке страницы
-        async function loadTop() {
-            try {
-                const res = await fetch(`${BACKEND_URL}/v1/top`);
-                const data = await res.json();
-                const container = document.getElementById('topList');
-                container.innerHTML = "";
+            if (bots.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-10 text-slate-500 text-sm font-medium bg-white/2 rounded-2xl border border-white/5">
+                        <span class="text-2xl block mb-2">📭</span>
+                        Таблица пуста.<br>Отправь первого бота в наш чат!
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = "";
+
+            bots.forEach((bot, index) => {
+                let badge = `${index + 1}`;
+                let rowStyle = "border-white/5 bg-white/2 hover:bg-white/5";
+                let pingStyle = "text-emerald-400 bg-emerald-500/10 border-emerald-500/10";
+                let nameStyle = "text-slate-200";
                 
-                data.bots.forEach((bot, index) => {
-                    let medal = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}.`;
-                    container.innerHTML += `
-                        <div class="flex justify-between items-center bg-[#0f0f1a] p-3 rounded-xl border border-gray-800 hover:border-purple-500/30 transition">
-                            <span class="font-medium text-white">${medal} @${bot.username}</span>
-                            <span class="font-bold text-green-400">${bot.ping} ms</span>
+                // Премиальные стили для ТОП-3 мест
+                if (index === 0) {
+                    badge = "🥇";
+                    rowStyle = "border-amber-500/20 bg-gradient-to-r from-amber-500/10 to-transparent shadow-lg shadow-amber-500/5";
+                    pingStyle = "text-amber-400 bg-amber-500/20 border-amber-500/30 font-black";
+                    nameStyle = "text-amber-100 font-extrabold";
+                } else if (index === 1) {
+                    badge = "🥈";
+                    rowStyle = "border-slate-400/20 bg-gradient-to-r from-slate-400/10 to-transparent";
+                    pingStyle = "text-slate-300 bg-slate-400/20 border-slate-400/30 font-bold";
+                    nameStyle = "text-slate-100 font-bold";
+                } else if (index === 2) {
+                    badge = "🥉";
+                    rowStyle = "border-orange-600/20 bg-gradient-to-r from-orange-600/10 to-transparent";
+                    pingStyle = "text-orange-400 bg-orange-600/20 border-orange-600/30 font-bold";
+                    nameStyle = "text-orange-100 font-bold";
+                }
+
+                container.innerHTML += `
+                    <div class="flex justify-between items-center p-3 rounded-2xl border ${rowStyle} transition-all duration-300 transform active:scale-[0.99]">
+                        <div class="flex items-center gap-3">
+                            <span class="w-6 text-center text-xs font-black font-mono text-slate-400">${badge}</span>
+                            <div class="flex flex-col">
+                                <span class="font-bold text-sm ${nameStyle}">
+                                    <span class="text-purple-400/70 font-medium">@</span>${bot.username}
+                                </span>
+                            </div>
                         </div>
-                    `;
-                });
-            } catch (e) {
-                console.error("Ошибка загрузки ТОПа", e);
-            }
+                        <div class="font-mono text-xs px-2.5 py-1 rounded-xl border ${pingStyle}">
+                            ${bot.ping} ms
+                        </div>
+                    </div>
+                `;
+            });
         }
 
-        // Функция отправки бота на проверку пинга
-        async function checkBotPing() {
-            const username = document.getElementById('botUsername').value.trim().replace('@', '');
-            if(!username) return alert('Введите юзернейм бота!');
-
-            // Показываем анимацию загрузки
-            document.getElementById('resultBlock').classList.remove('hidden');
-            document.getElementById('checkedBotName').innerText = `@${username}`;
-            document.getElementById('pingValue').innerText = "Тестируем...";
-
-            try {
-                const res = await fetch(`${BACKEND_URL}/v1/ping`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ username: username })
-                });
-                const data = await res.json();
-                
-                // Выводим результат
-                document.getElementById('pingValue').innerText = data.ping;
-                loadTop(); // Обновляем ТОП
-            } catch (e) {
-                document.getElementById('pingValue').innerText = "Ошибка сервера";
-            }
-        }
-
-        // Загружаем ТОП при открытии сайта
-        loadTop();
+        renderGlobalTop();
     </script>
 </body>
 </html>
